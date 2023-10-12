@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Build
-        run: go build -v .
+        run: go build -o bin/ -v .
       - name: Create release
         uses: https://gitea.com/actions/release-action@main
         with:
