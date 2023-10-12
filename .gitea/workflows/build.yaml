@@ -19,9 +19,9 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Build Linux
-        run: go build -o dist/epformat-linux-amd64 -v .
+        run: go build -o dist/epformat-linux-amd64 .
       - name: Build Windows
-        run: GOOS=windows GOARCH=amd64 go build -o dist/epformat-windows-amd64.exe -v .
+        run: GOOS=windows GOARCH=amd64 go build -o dist/epformat-windows-amd64.exe .
       - name: Create release
         uses: https://gitea.com/actions/release-action@main
         with:
