@@ -1,3 +1,5 @@
+github.com/aynakeya/deepcolor v1.0.1 h1:f1/rJBKmInyOyQA2rVOsiJFauymv4k2TngK4LUu0cYE=
+github.com/aynakeya/deepcolor v1.0.1/go.mod h1:9wdFsi0G4uAQlu58B2/eHBlGoQ8VkmSyPsK+bDZ+6dQ=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/frankban/quicktest v1.14.3 h1:FJKSZTDHjyhriyC81FLQ0LY93eSai0ZyR/ZIkd3ZUKE=
 github.com/google/go-cmp v0.5.7 h1:81/ik6ipDQS2aGcBfIN5dHDB36BwrStyeAQquSYCV4o=
