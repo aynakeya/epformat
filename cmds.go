@@ -58,6 +58,9 @@ type fileInfo struct {
 func getAllFiles(dir string) []fileInfo {
 	var files []fileInfo = make([]fileInfo, 0)
 	_ = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
 		if !info.IsDir() {
 			files = append(files, fileInfo{path: path, info: info})
 		}
@@ -107,8 +110,7 @@ func createRenameCmd() *cobra.Command {
 					yes = answer == "y"
 				}
 				if yes {
-					dir, _ := filepath.Split(file.path)
-					err = os.Rename(file.path, removeSpecialChars(filepath.Join(dir, renamed)))
+					err = os.Rename(file.path, filepath.Join(filepath.Dir(file.path), removeSpecialChars(renamed)))
 					if err != nil {
 						fmt.Printf("- \"%s\" => \"%s\" (%s)\n", fileName, renamed, err)
 					} else {
