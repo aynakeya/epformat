@@ -107,7 +107,8 @@ func createRenameCmd() *cobra.Command {
 					yes = answer == "y"
 				}
 				if yes {
-					err = os.Rename(file.path, removeSpecialChars(filepath.Join(filepath.Dir(file.path), renamed)))
+					dir, _ := filepath.Split(file.path)
+					err = os.Rename(file.path, removeSpecialChars(filepath.Join(dir, renamed)))
 					if err != nil {
 						fmt.Printf("- \"%s\" => \"%s\" (%s)\n", fileName, renamed, err)
 					} else {
