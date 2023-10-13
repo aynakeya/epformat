@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"gopkg.in/ini.v1"
 	"os"
 	"path/filepath"
 	"strings"
@@ -127,11 +128,30 @@ func createRenameCmd() *cobra.Command {
 func createRootCmd() *cobra.Command {
 	var format string
 	var title string
+	var configFile string
 
 	rootCmd := &cobra.Command{
 		Use:   "epformat",
 		Short: "format anime file with proper episode format",
 		Long:  "format anime file with proper episode format",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if configFile == "" {
+				return nil
+			}
+			config, err := ini.Load(configFile)
+			if err != nil {
+				return nil
+			}
+			tmp := config.Section("").Key("title").String()
+			if tmp != "" {
+				title = tmp
+			}
+			tmp = config.Section("").Key("format").String()
+			if tmp != "" {
+				format = tmp
+			}
+			return nil
+		},
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd.HelpFunc()(cmd, args)
 		},
@@ -140,6 +160,7 @@ func createRootCmd() *cobra.Command {
 
 	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", DefaultFormat, "format string")
 	rootCmd.PersistentFlags().StringVarP(&title, "title", "t", "", "episode title")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "", "use config file")
 	rootCmd.AddCommand(createFormatCmd(), createRenameCmd())
 	return rootCmd
 }
