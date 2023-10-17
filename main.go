@@ -7,12 +7,6 @@ import (
 	"text/template"
 )
 
-type NameGrader interface {
-	GradeTitle(name string) int
-	GradeSeason(name string) int
-	GradeEpisode(name string) int
-}
-
 type EpisodeInfo struct {
 	Title      string
 	Season     int

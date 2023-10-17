@@ -9,11 +9,17 @@ import (
 	"strings"
 )
 
-func RenameEpInfo(extractor EpisodeExtractor, value, title, format string) (string, error) {
+func RenameEpInfo(extractor EpisodeExtractor, value, title string, season, epnum int, format string) (string, error) {
 	value = strings.TrimSpace(value)
 	episode := extractor.Extract(value)
 	if title != "" {
 		episode.Title = title
+	}
+	if season != -1 {
+		episode.Season = season
+	}
+	if epnum != -1 {
+		episode.Episode = epnum
 	}
 	return episode.FormatInfo(format)
 }
@@ -28,8 +34,10 @@ func createFormatCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			title := cmd.Flag("title").Value.String()
 			format := cmd.Flag("format").Value.String()
+			season, _ := cmd.Flags().GetInt("season")
+			epnum, _ := cmd.Flags().GetInt("episode")
 			for _, arg := range args {
-				renamed, err := RenameEpInfo(MainExtractor, arg, title, format)
+				renamed, err := RenameEpInfo(MainExtractor, arg, title, season, epnum, format)
 				if verbose {
 					if err != nil {
 						fmt.Printf("- \"%s\" => %s\n", arg, err)
@@ -93,13 +101,15 @@ func createRenameCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			title := cmd.Flag("title").Value.String()
 			format := cmd.Flag("format").Value.String()
+			season, _ := cmd.Flags().GetInt("season")
+			epnum, _ := cmd.Flags().GetInt("episode")
 			files := make([]fileInfo, 0)
 			for _, arg := range args {
 				files = append(files, getAllFiles(arg)...)
 			}
 			for _, file := range files {
 				fileName := file.info.Name()
-				renamed, err := RenameEpInfo(MainExtractor, fileName, title, format)
+				renamed, err := RenameEpInfo(MainExtractor, fileName, title, season, epnum, format)
 				if err != nil {
 					fmt.Printf("- \"%s\" => %s\n", fileName, err)
 					continue
@@ -128,6 +138,8 @@ func createRenameCmd() *cobra.Command {
 func createRootCmd() *cobra.Command {
 	var format string
 	var title string
+	var season int
+	var episode int
 	var configFile string
 
 	rootCmd := &cobra.Command{
@@ -150,6 +162,14 @@ func createRootCmd() *cobra.Command {
 			if tmp != "" {
 				format = tmp
 			}
+			tmpInt, err := config.Section("").Key("season").Int()
+			if err == nil {
+				season = tmpInt
+			}
+			tmpInt, err = config.Section("").Key("episode").Int()
+			if err == nil {
+				episode = tmpInt
+			}
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
@@ -160,6 +180,8 @@ func createRootCmd() *cobra.Command {
 
 	rootCmd.PersistentFlags().StringVarP(&format, "format", "f", DefaultFormat, "format string")
 	rootCmd.PersistentFlags().StringVarP(&title, "title", "t", "", "episode title")
+	rootCmd.PersistentFlags().IntVarP(&season, "season", "s", -1, "season number")
+	rootCmd.PersistentFlags().IntVarP(&episode, "episode", "e", -1, "episode number")
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "", "use config file")
 	rootCmd.AddCommand(createFormatCmd(), createRenameCmd())
 	return rootCmd
