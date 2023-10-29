@@ -112,16 +112,23 @@ func createRenameCmd() *cobra.Command {
 				renamed, err := RenameEpInfo(MainExtractor, fileName, title, season, epnum, format)
 				if err != nil {
 					fmt.Printf("- \"%s\" => %s\n", fileName, err)
-					continue
+				} else {
+					fmt.Printf("- \"%s\" => \"%s\"\n", fileName, renamed)
 				}
-				if !yes {
-					fmt.Printf("- \"%s\" => \"%s\" rename? (y/n) ", fileName, renamed)
-					var answer string
-					_, _ = fmt.Scanln(&answer)
-					yes = answer == "y"
-				}
-				if yes {
-					err = os.Rename(file.path, filepath.Join(filepath.Dir(file.path), removeSpecialChars(renamed)))
+			}
+			if !yes {
+				fmt.Printf("- rename? (y/n) ")
+				var answer string
+				_, _ = fmt.Scanln(&answer)
+				yes = answer == "y"
+			}
+			if yes {
+				for _, file := range files {
+					fileName := file.info.Name()
+					renamed, err := RenameEpInfo(MainExtractor, fileName, title, season, epnum, format)
+					if err == nil {
+						err = os.Rename(file.path, filepath.Join(filepath.Dir(file.path), removeSpecialChars(renamed)))
+					}
 					if err != nil {
 						fmt.Printf("- \"%s\" => \"%s\" (%s)\n", fileName, renamed, err)
 					} else {
