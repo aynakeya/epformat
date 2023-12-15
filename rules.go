@@ -6,6 +6,7 @@ import (
 	"github.com/aynakeya/deepcolor/transform/translators"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func init() {
@@ -44,6 +45,10 @@ func (c *NumToInt) MustApply(value interface{}) interface{} {
 	return v
 }
 
+var stringTrim = transform.WrapTranslator("trimspace", func(value interface{}) (interface{}, error) {
+	return strings.TrimSpace(value.(string)), nil
+})
+
 // ((\d+)(\.\d+)?)(v\d+)?
 var EpNumTranslator = translators.NewPipeline(
 	translators.NewSwitcher(
@@ -81,6 +86,7 @@ var EpFormatTranslator = translators.NewPipeline(
 		regexp.MustCompile(`(?i)mp4|mkv|rmvb`),
 		0),
 	translators.NewStrCase(true),
+	stringTrim,
 )
 
 var TagTranslator = translators.NewPipeline(
@@ -94,4 +100,6 @@ var ExtTranslator = translators.NewSwitcher(
 	translators.NewValue(""),
 )
 
-var RemoveTagTranslator = translators.NewRegExpReplacer(regexp.MustCompile(`\[[^\[\]]*\]|【[^【】]*】`), "")
+var RemoveTagTranslator = translators.NewPipeline(
+	translators.NewRegExpReplacer(regexp.MustCompile(`\[[^\[\]]*\]|【[^【】]*】`), ""),
+	stringTrim)
