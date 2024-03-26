@@ -3,10 +3,18 @@ name: Go
 on:
   push
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            binary_suffix: ''
+          - goos: windows
+            goarch: amd64
+            binary_suffix: '.exe'
     steps:
       - uses: actions/checkout@v3
 
@@ -14,14 +22,15 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.20'
+
       - name: Install dependencies
         run: go get .
-      - name: Build Linux
-        run: go build -o dist/epformat-linux-amd64 .
-      - name: Build Windows
-        run: GOOS=windows GOARCH=amd64 go build -o dist/epformat-windows-amd64.exe .
+
+      - name: Build
+        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.binary_suffix }}
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: epformat
-          path: dist/
+          name: epformat-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.binary_suffix }}
