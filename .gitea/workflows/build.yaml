@@ -1,9 +1,7 @@
 name: Go
 
 on:
-  push:
-    tags:
-      - '*'
+  push
 
 
 jobs:
@@ -22,10 +20,9 @@ jobs:
         run: go build -o dist/epformat-linux-amd64 .
       - name: Build Windows
         run: GOOS=windows GOARCH=amd64 go build -o dist/epformat-windows-amd64.exe .
-      - name: Create release
-        uses: https://gitea.com/actions/release-action@main
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: |-
-            dist/**
-          api_key: '${{secrets.RELEASE_TOKEN}}'
+          name: epformat
+          path: dist/
 
