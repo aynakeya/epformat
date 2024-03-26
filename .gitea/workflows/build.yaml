@@ -8,8 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, windows]
-        goarch: [amd64]
+        include:
+          - goos: linux
+            goarch: amd64
+            binary_suffix: ''
+          - goos: windows
+            goarch: amd64
+            binary_suffix: '.exe'
     steps:
       - uses: actions/checkout@v3
 
@@ -22,10 +27,10 @@ jobs:
         run: go get .
 
       - name: Build
-        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }} .
+        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.binary_suffix }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: epformat-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/
+          path: dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.binary_suffix }}
