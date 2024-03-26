@@ -24,8 +24,7 @@ jobs:
         run: go get .
 
       - name: Build
-        run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ env.OUT }}
+        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ env.OUT }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
