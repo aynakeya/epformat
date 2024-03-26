@@ -10,8 +10,6 @@ jobs:
       matrix:
         goos: [linux, windows]
         goarch: [amd64]
-    env:
-        OUT: dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }}
     steps:
       - uses: actions/checkout@v3
 
@@ -22,6 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: go get .
+
+      - name: Determine Output Filename
+        run: echo "OUT=dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }}" >> $GITHUB_ENV
 
       - name: Build
         run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ env.OUT }}
