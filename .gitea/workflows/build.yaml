@@ -21,14 +21,11 @@ jobs:
       - name: Install dependencies
         run: go get .
 
-      - name: Determine Output Filename
-        run: echo "OUT=dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }}" >> $GITHUB_ENV
-
       - name: Build
-        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o ${{ env.OUT }}
+        run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: epformat-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: ${{ env.OUT }}
+          path: dist/
