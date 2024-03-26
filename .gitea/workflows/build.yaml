@@ -25,7 +25,7 @@ jobs:
         env:
           OUT: dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ if eq(matrix.goos, 'windows') }}.exe${{ else }}${{ endif }}
         run: |
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $OUT
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o $OUT .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
