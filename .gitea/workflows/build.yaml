@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: epformat-${{ matrix.goos }}-${{ matrix.goarch }}
-          path: dist/epformat-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.binary_suffix }}
+          path: dist/
