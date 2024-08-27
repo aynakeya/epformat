@@ -191,5 +191,6 @@ func createRootCmd() *cobra.Command {
 	rootCmd.PersistentFlags().IntVarP(&episode, "episode", "e", -1, "episode number")
 	rootCmd.PersistentFlags().StringVarP(&configFile, "config", "c", "", "use config file")
 	rootCmd.AddCommand(createFormatCmd(), createRenameCmd())
+	rootCmd.AddCommand(createGuiCmd())
 	return rootCmd
 }

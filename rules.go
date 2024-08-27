@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aynakeya/deepcolor/transform"
 	"github.com/aynakeya/deepcolor/transform/translators"
 	"regexp"
@@ -49,12 +50,26 @@ var stringTrim = transform.WrapTranslator("trimspace", func(value interface{}) (
 	return strings.TrimSpace(value.(string)), nil
 })
 
+var removeExt = transform.WrapTranslator("remove_ext", func(value interface{}) (interface{}, error) {
+	val, ok := value.(string)
+	if !ok {
+		return nil, fmt.Errorf("expected a string, but got %T", value)
+	}
+
+	// Find the last occurrence of the dot and remove the extension
+	if dotIndex := strings.LastIndex(val, "."); dotIndex != -1 {
+		val = val[:dotIndex]
+	}
+
+	return val, nil
+})
+
 // ((\d+)(\.\d+)?)(v\d+)?
 var EpNumTranslator = translators.NewPipeline(
 	translators.NewSwitcher(
 		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)第((\d+)(\.\d+)?)(v\d+)?集`), 1),
-		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)e((\d+)(\.\d+)?)(v\d+)?`), 1),
-		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)ep((\d+)(\.\d+)?)(v\d+)?`), 1),
+		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i) e((\d+)(\.\d+)?)(v\d+)?`), 1),
+		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i) ep((\d+)(\.\d+)?)(v\d+)?`), 1),
 		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)第(.){1,2}集`), 1),
 		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)\[((\d+)(\.\d+)?)(v\d+)?\]`), 1),
 		translators.NewRegExpFindFirst(regexp.MustCompile(`(?i)[\[ ]((\d+)(\.\d+)?)(v\d+)?[\] ]`), 1),
@@ -104,4 +119,5 @@ var ExtTranslator = translators.NewSwitcher(
 
 var RemoveTagTranslator = translators.NewPipeline(
 	translators.NewRegExpReplacer(regexp.MustCompile(`\[[^\[\]]*\]|【[^【】]*】`), ""),
+	removeExt,
 	stringTrim)
