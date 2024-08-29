@@ -180,11 +180,9 @@ func startGui() {
 		widget.NewLabel("Episode"),
 		episodeEntry,
 	)
-	content := container.NewVBox(
+	w.SetContent(container.NewBorder(container.NewVBox(
 		inputForm,
-		container.NewVBox(tableHeader, widget.NewSeparator(), table))
-
-	w.SetContent(content)
+		tableHeader, widget.NewSeparator()), nil, nil, nil, table))
 	w.Resize(fyne.NewSize(720, 480))
 	w.ShowAndRun()
 }
